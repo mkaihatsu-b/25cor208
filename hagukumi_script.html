@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>はぐくみ企業年金｜アポトークスクリプト</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1D4ED8;
+    --blue-light: #3B82F6;
+    --blue-pale: #EFF6FF;
+    --blue-mid: #DBEAFE;
+    --green: #059669;
+    --green-pale: #ECFDF5;
+    --amber: #D97706;
+    --amber-pale: #FFFBEB;
+    --purple: #7C3AED;
+    --purple-pale: #F5F3FF;
+    --teal: #0891B2;
+    --teal-pale: #ECFEFF;
+    --red: #DC2626;
+    --red-pale: #FEF2F2;
+    --gray: #1F2937;
+    --gray-mid: #6B7280;
+    --gray-light: #F9FAFB;
+    --white: #ffffff;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #F1F5F9;
+    min-height: 100vh;
+    color: var(--gray);
+  }
+
+  /* LAYOUT */
+  .shell {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+    align-self: flex-start;
+  }
+
+  .sidebar-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0 4px 16px;
+    border-bottom: 2px solid var(--blue-mid);
+    margin-bottom: 16px;
+  }
+
+  .step-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  .nav-item:hover { background: var(--blue-pale); }
+
+  .nav-item.active {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 2px 12px rgba(29,78,216,0.35);
+  }
+
+  .nav-item.done { opacity: 0.6; }
+  .nav-item.done .nav-num { background: var(--green); color: white; }
+
+  .nav-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num { background: rgba(255,255,255,0.25); color: white; }
+
+  .nav-label { font-size: 12px; font-weight: 500; line-height: 1.3; }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    margin-top: 24px;
+    padding: 0 4px;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: var(--gray-mid);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--blue-mid);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* MAIN CARD */
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: cardIn 0.3s ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .step-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .card-title { font-size: 22px; font-weight: 900; color: var(--gray); line-height: 1.3; }
+  .card-subtitle { font-size: 13px; color: var(--gray-mid); margin-top: 4px; }
+
+  .card-body { padding: 28px 32px; }
+
+  /* TIP BOX */
+  .tip {
+    display: flex;
+    gap: 10px;
+    background: var(--amber-pale);
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #92400E;
+  }
+  .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* SCRIPT BOX */
+  .script-box {
+    border-radius: 12px;
+    border: 1.5px solid;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .script-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .script-box-body {
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 2;
+  }
+
+  .script-line { 
+    padding: 2px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .script-line::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.4;
+    margin-top: 11px;
+    flex-shrink: 0;
+  }
+  .script-line.empty { height: 8px; }
+  .script-line.empty::before { display: none; }
+
+  /* BRANCH BOX */
+  .branch-header {
+    background: #EEF2FF;
+    border: 1.5px solid #C7D2FE;
+    border-radius: 10px 10px 0 0;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3730A3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1.5px solid #C7D2FE;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .branch-cell {
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .branch-cell:first-child { border-right: 1px solid #C7D2FE; }
+
+  .branch-cell-label {
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* CHECK LIST */
+  .check-list { list-style: none; margin-bottom: 20px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 14px;
+    background: var(--gray-light);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* HEARING TABLE */
+  .hearing-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  .hearing-table td { padding: 10px 14px; border: 1px solid #E5E7EB; font-size: 13px; }
+  .hearing-table td:first-child {
+    background: var(--blue);
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    width: 36px;
+    text-align: center;
+    border-color: var(--blue);
+  }
+  .hearing-table td:nth-child(2) { font-weight: 600; width: 200px; background: var(--blue-pale); }
+  .hearing-table td:nth-child(3) { color: var(--gray-mid); font-size: 12px; }
+  .hearing-table tr:first-child td { border-top: none; }
+  .hearing-table tr:first-child td:first-child { border-radius: 8px 0 0 0; }
+  .hearing-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+  .hearing-table tr:first-child td:last-child { border-radius: 0 8px 0 0; }
+  .hearing-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+  /* SCHEDULE LINKS */
+  .schedule-block {
+    margin-bottom: 20px;
+  }
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .schedule-card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .schedule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .schedule-card-header {
+    padding: 10px 14px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .schedule-card-body {
+    padding: 8px 14px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .schedule-card-note {
+    padding: 0 14px 4px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  .schedule-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 8px 14px 14px;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .schedule-btn:hover { opacity: 0.85; }
+
+  /* SUB LABEL */
+  .sub-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray);
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-label::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: var(--blue-light);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* NAVIGATION BUTTONS */
+  .card-footer {
+    padding: 20px 32px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #F3F4F6;
+    gap: 12px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-prev {
+    background: #F3F4F6;
+    color: var(--gray-mid);
+  }
+  .btn-prev:hover { background: #E5E7EB; color: var(--gray); }
+
+  .btn-next {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 4px 14px rgba(29,78,216,0.3);
+  }
+  .btn-next:hover {
+    background: #1E40AF;
+    box-shadow: 0 6px 20px rgba(29,78,216,0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-finish {
+    background: var(--green);
+    color: white;
+    box-shadow: 0 4px 14px rgba(5,150,105,0.3);
+  }
+  .btn-finish:hover { background: #047857; transform: translateY(-1px); }
+
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+  .step-counter {
+    font-size: 12px;
+    color: var(--gray-mid);
+    font-weight: 500;
+  }
+
+  /* COMPLETE SCREEN */
+  .complete-screen {
+    text-align: center;
+    padding: 60px 32px;
+  }
+  .complete-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .complete-title { font-size: 26px; font-weight: 900; margin-bottom: 12px; color: var(--green); }
+  .complete-body  { font-size: 14px; color: var(--gray-mid); line-height: 1.8; }
+  .btn-restart { margin-top: 32px; background: var(--blue); color: white; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; box-shadow: 0 4px 14px rgba(29,78,216,0.3); transition: all 0.2s; }
+  .btn-restart:hover { background: #1E40AF; transform: translateY(-1px); }
+
+  /* Q&A ACCORDION */
+  .qa-section { margin-top: 28px; }
+  .qa-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #DC2626;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #FEF2F2;
+    border-radius: 8px;
+    border-left: 4px solid #DC2626;
+  }
+  .qa-item {
+    border: 1.5px solid #FCA5A5;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .qa-item:hover { box-shadow: 0 2px 12px rgba(220,38,38,0.1); }
+  .qa-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #FFF5F5;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 700;
+    color: #991B1B;
+  }
+  .qa-question-left { display: flex; align-items: flex-start; gap: 8px; }
+  .qa-q-badge {
+    background: #DC2626;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .qa-chevron {
+    font-size: 12px;
+    color: #DC2626;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .qa-item.open .qa-chevron { transform: rotate(180deg); }
+  .qa-answer {
+    display: none;
+    padding: 14px 16px 14px 40px;
+    background: white;
+    border-top: 1px solid #FCA5A5;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #374151;
+  }
+  .qa-item.open .qa-answer { display: block; }
+  .qa-a-badge {
+    display: inline-block;
+    background: #059669;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 720px) {
+    .shell { flex-direction: column; padding: 12px; }
+    .sidebar { width: 100%; position: static; }
+    .step-nav { flex-direction: row; flex-wrap: wrap; }
+    .nav-item { width: auto; }
+    .card-header, .card-body, .card-footer { padding: 20px 18px; }
+    .branch-grid { grid-template-columns: 1fr; }
+    .branch-cell:first-child { border-right: none; border-bottom: 1px solid #C7D2FE; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">📋 Talk Script</div>
+    <nav class="step-nav" id="stepNav"></nav>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>進捗</span>
+        <span id="progressText">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="card" id="mainCard"></div>
+  </main>
+</div>
+
+<script>
+const steps = [
+  {
+    id: 1,
+    label: "電話をつなぐ",
+    title: "電話をつないでもらう",
+    subtitle: "まず担当者・代表者に取り次いでもらうフェーズ",
+    color: "#1D4ED8",
+    bgColor: "#DBEAFE",
+    tip: "明るく、はっきりと名乗ること！相手の名前がわからなければ「代表者様」でOK。最初の印象が大事です。",
+    scripts: [
+      { label: "📞 導入トーク", color: "#1D4ED8", bg: "#EFF6FF", lines: [
+        "お世話になっております。",
+        "b株式会社の〇〇と申します。",
+        "厚労省からの認可を受けております",
+        "「はぐくみ企業年金」の件でご連絡差し上げました。",
+        "",
+        "〇〇様（お名前不明の場合は「代表者様」）",
+        "はいらっしゃいますでしょうか？",
+      ]}
+    ],
+    qa: [
+      { q: "「担当者に回してください」と言われた", a: "ありがとうございます。担当の方のお名前と、ご連絡先を伺えますでしょうか？後ほど改めてご連絡いたします。" },
+      { q: "「どんな用件ですか？」と受付に聞かれた", a: "はい、厚労省認可の企業年金「はぐくみ企業年金」のご案内でして、社会保険料の軽減に関するご提案です。代表者様へお取り次ぎいただけますでしょうか。" },
+      { q: "「いません／席を外しています」と言われた", a: "そうでしたか。では、いつ頃お戻りになりますでしょうか？改めてお電話させていただきます。" },
+    ]
+  },
+  {
+    id: 2,
+    label: "内容を説明",
+    title: "サービス内容を簡単に伝える",
+    subtitle: "難しい用語は使わず、メリットを2点だけ伝えるフェーズ",
+    color: "#0891B2",
+    bgColor: "#CFFAFE",
+    tip: "「社会保険料が減る」「福利厚生になる」の2点だけ！長くなるとここで切られます。",
+    scripts: [
+      { label: "💬 ご案内トーク", color: "#0891B2", bg: "#ECFEFF", lines: [
+        "弊社では「はぐくみ企業年金」という",
+        "厚生労働大臣認可の企業年金をご案内しております。",
+        "",
+        "毎月の社会保険料・法定福利費の軽減が見込めるサービスで、",
+        "従業員様から役員・代表様まで、ご希望に応じて加入いただける",
+        "お金の福利厚生となっております。",
+        "",
+        "現在11万人以上にご利用いただいており、",
+        "御社へのメリットをぜひ情報共有させていただきたく、",
+        "ご連絡差し上げました。",
+      ]}
+    ],
+    qa: [
+      { q: "「うちには必要ない」と言われた", a: "そうおっしゃる方も多いのですが、社会保険料を1円も増やさずに福利厚生を拡充できる仕組みでして、まずどんな制度か5分だけ情報共有させていただけますか？" },
+      { q: "「今は忙しい」と言われた", a: "お忙しいところ大変失礼いたしました。オンラインで15〜20分ほどのご説明ですので、お手すきの際にお時間いただけますと幸いです。〇月〇日か〇月〇日はいかがでしょうか？" },
+      { q: "「他社でもう入っている」と言われた", a: "そうでしたか！ちなみにどちらの制度をご利用でしょうか？はぐくみ企業年金は他制度と併用できる場合もございますので、一度ご確認だけでもいかがでしょうか？" },
+    ]
+  },
+  {
+    id: 3,
+    label: "アポを取る",
+    title: "オンライン面談のアポを取る",
+    subtitle: "「情報共有だけ」のスタンスで気軽に誘うフェーズ",
+    color: "#7C3AED",
+    bgColor: "#EDE9FE",
+    tip: "「買ってください」ではなく「情報共有だけ」のスタンスで。断られにくくなります！",
+    scripts: [
+      { label: "🗓️ アポ取りトーク", color: "#7C3AED", bg: "#F5F3FF", lines: [
+        "ご自身の社保の負担を抑えながら、",
+        "副次的な効果として法定福利費の軽減にもつながる",
+        "「はぐくみ企業年金」（厚労省認可）のご案内です。",
+        "",
+        "税金対策・人材定着の一つとして活用いただける福利厚生で、",
+        "まずどんな制度か、御社にどれくらい効果があるのか、",
+        "情報共有のお時間を少しだけいただけますでしょうか？",
+        "",
+        "オンラインでお話しできますとしたら、",
+        "〇月〇日〇時はいかがでしょうか？",
+      ]}
+    ],
+    qa: [
+      { q: "「資料だけ送ってください」と言われた", a: "ありがとうございます。資料はご用意できますが、御社の人数構成によって効果額が大きく変わりますので、数字をお見せしながらご説明する方が圧倒的にわかりやすいんです。15分だけいただけますか？" },
+      { q: "「オンラインは苦手」と言われた", a: "そうでしたか。ZoomはURLをクリックするだけでお使いいただけますので、当日弊社からサポートもできます。もし難しければお電話でのご説明も対応しております。" },
+      { q: "「検討します」と言われた", a: "ありがとうございます！検討いただくためにも一度詳しいご説明をと思っておりまして、〇月〇日か〇月〇日、15分だけいただけますでしょうか？" },
+      { q: "「上に確認してから」と言われた", a: "かしこまりました。では上の方も一緒にご参加いただける形でZoom設定できますので、ぜひご一緒にいかがでしょうか？" },
+    ]
+  },
+  {
+    id: 4,
+    label: "改定月の確認",
+    title: "役員改定月を確認する",
+    subtitle: "役員加入は年1回のみ。タイミングを逃さないためのフェーズ",
+    color: "#059669",
+    bgColor: "#D1FAE5",
+    tip: "役員の加入タイミングは「年に一度の役員報酬改定月のみ」。これを知らないとせっかくの商談がムダになります！",
+    scripts: [
+      { label: "📅 改定月確認トーク", color: "#059669", bg: "#ECFDF5", lines: [
+        "税務上、損金算入のために",
+        "決算から3か月以内に役員報酬を決めていただくと思うのですが、",
+        "",
+        "はぐくみ企業年金の役員加入タイミングが、",
+        "年に一度の役員報酬改定月のみとなっております。",
+        "",
+        "それに合わせてご検討いただく方がとても多いのですが、",
+        "御社では毎年何月に改定されていますか？",
+      ]}
+    ],
+    qa: [
+      { q: "「役員報酬の改定月が過ぎてしまった」と言われた", a: "そうでしたか。役員様の加入は次の改定月になりますが、従業員様は月単位で随時加入いただけます。まずは従業員様への導入から進められるケースも多いですよ。" },
+      { q: "「役員報酬は変えていない／毎年同じ」と言われた", a: "ありがとうございます。改定月さえ合えば加入いただけますので、今の報酬額を変えずに手取りを増やす形で導入される方が多いです。ぜひ一度ご説明させてください。" },
+    ]
+  },
+  {
+    id: 5,
+    label: "ヒアリング",
+    title: "面談前のヒアリング",
+    subtitle: "「資料作成のために」と伝えて情報を集めるフェーズ",
+    color: "#D97706",
+    bgColor: "#FDE68A",
+    tip: "「当日の資料作成のために数点だけ伺えますか？」と切り出すと自然に聞けます。",
+    hearing: true,
+    checkItems: [
+      "厚生年金加入：役員1名以上＋従業員1名以上、または従業員のみ3名以上",
+      "厚生年金の適用開始から1年以上経過している",
+      "現在、債務超過はない（債務超過 → 丁重にお断りする）",
+    ],
+    scripts: [
+      { label: "⚠️ 最終確認", color: "#DC2626", bg: "#FEF2F2", lines: [
+        "最終的なご判断は〇〇様がされるというご認識でよろしいでしょうか？",
+      ]}
+    ],
+    qa: [
+      { q: "「人数は教えられない」と言われた", a: "かしこまりました。大まかな規模感（10名以下・10〜50名・50名以上など）で構いません。面談当日に一緒に確認することもできますので、ご安心ください。" },
+      { q: "「決算月は関係あるの？」と聞かれた", a: "はい、役員様の加入タイミングが役員報酬の改定月に限られるため、決算月を基準にご準備いただく方がスムーズなんです。" },
+      { q: "「Zoomは使えない」と言われた", a: "問題ございません。お電話でのご説明にも対応しておりますので、お使いやすい方法でご案内させていただきます。" },
+    ]
+  },
+  {
+    id: 6,
+    label: "興味確認",
+    title: "一番気になるポイントを確認",
+    subtitle: "3つのメリットから興味を引き出して面談につなぐフェーズ",
+    color: "#0F766E",
+    bgColor: "#CCFBF1",
+    tip: "回答によって面談のトークを変えよう。事前に把握しておくと刺さるプレゼンができます！",
+    scripts: [
+      { label: "✨ メリット紹介トーク", color: "#0F766E", bg: "#F0FDFA", lines: [
+        "はぐくみ企業年金には主に3つのメリットがあります。",
+        "",
+        "1️⃣  代表・役員様の税負担を抑えながら資産形成ができる",
+        "2️⃣  加入者の社会保険料軽減 → 法定福利費の削減につながる",
+        "3️⃣  福利厚生の充実で従業員の定着率向上・採用力強化",
+        "",
+        "一番気になるポイントはどれですか？",
+      ]}
+    ],
+    branch: {
+      condition: "🔀 回答パターンで対応を変えよう",
+      options: [
+        {
+          label: "① ② と答えた場合",
+          sublabel: "（スモール代表に多い）",
+          color: "#065F46",
+          bg: "#ECFDF5",
+          text: "ありがとうございます！個人・法人それぞれにどれくらい効果があるか、オンライン面談で詳しくご説明します。",
+        },
+        {
+          label: "③ と答えた場合",
+          sublabel: "（従業員数の多い企業に多い）",
+          color: "#1E40AF",
+          bg: "#EFF6FF",
+          text: "ありがとうございます！人材定着・従業員エンゲージメントへの研究データもございます。面談時にご紹介しますね。",
+        }
+      ]
+    },
+    qa: [
+      { q: "「どれも特に気にならない」と言われた", a: "そうでしたか。では実際に御社の規模で年間いくら効果が出るか、数字でお見せしますね。数字を見てから判断いただければと思います。" },
+      { q: "「社会保険料って本当に減るの？」と聞かれた", a: "はい、加入者の社会保険料の計算のベースが変わることで軽減につながります。詳しい仕組みを面談でご説明しますね。" },
+    ]
+  },
+  {
+    id: 7,
+    label: "電話を終える",
+    title: "クロージング・電話を終える",
+    subtitle: "URL送付と前日リマインドを忘れずに確認するフェーズ",
+    color: "#4B5563",
+    bgColor: "#E5E7EB",
+    tip: "前日リマインドの日時もこのタイミングで確認！無断キャンセルを防げます。",
+    scripts: [
+      { label: "📨 終話トーク", color: "#4B5563", bg: "#F9FAFB", lines: [
+        "それでは、このあとベタープレイスの担当より",
+        "ZoomのURLをメールでお送りします。",
+        "",
+        "メール内の「個人情報の取扱いおよび",
+        "特定電子メール法の同意について」にご同意いただくことで",
+        "日程確定となります。",
+        "お手数ですがURLからご確認・ご同意のほどよろしくお願いいたします。",
+        "",
+        "また、前日に1〜2分だけ当日のご予定確認の",
+        "お電話を入れさせていただきますが、",
+        "〇月〇日〇時頃でご都合いかがでしょうか？",
+      ]}
+    ],
+    qa: [
+      { q: "「メールは見ない／確認できない」と言われた", a: "かしこまりました。では当日のZoom URLを口頭でお伝えする形にもできますので、お電話番号か別の連絡先を教えていただけますでしょうか。" },
+      { q: "「前日の確認電話はいらない」と言われた", a: "かしこまりました。では当日〇時に直接Zoomにてお待ちしております。何かございましたらご連絡ください。" },
+      { q: "「やっぱりキャンセルしたい」と言われた", a: "そうでしたか、承知いたしました。もし今後またご興味が出たときはいつでもご連絡ください。本日はお時間いただきありがとうございました。" },
+    ]
+  }
+];
+
+const hearingRows = [
+  { num: "1", label: "お名前", note: "" },
+  { num: "2", label: "部署・役職", note: "" },
+  { num: "3", label: "メールアドレス", note: "ZoomのURL送付先" },
+  { num: "4", label: "MTGツール", note: "原則Zoom" },
+  { num: "5", label: "携帯番号（任意）", note: "" },
+  { num: "決", label: "決算月", note: "損金算入タイミングの確認" },
+];
+
+let currentStep = 0;
+
+function buildNav() {
+  const nav = document.getElementById('stepNav');
+  nav.innerHTML = steps.map((s, i) => `
+    <button class="nav-item ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}"
+      onclick="goTo(${i})">
+      <div class="nav-num">${i < currentStep ? '✓' : s.id}</div>
+      <div class="nav-label">${s.label}</div>
+    </button>
+  `).join('');
+}
+
+function buildProgress() {
+  const pct = Math.round((currentStep / (steps.length)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function renderStep(step) {
+  const s = steps[step];
+  if (!s) { renderComplete(); return; }
+
+  const badgeStyle = `background:${s.bgColor};color:${s.color}`;
+
+  let bodyHTML = '';
+
+  // TIP
+  if (s.tip) {
+    bodyHTML += `<div class="tip"><span class="tip-icon">💡</span><span>${s.tip}</span></div>`;
+  }
+
+  // SCRIPTS
+  if (s.scripts) {
+    s.scripts.forEach(sc => {
+      const lines = sc.lines.map(l => l === ''
+        ? `<div class="script-line empty"></div>`
+        : `<div class="script-line" style="color:${sc.color}">${l}</div>`
+      ).join('');
+      bodyHTML += `
+        <div class="script-box" style="border-color:${sc.color}20">
+          <div class="script-box-header" style="background:${sc.bg};color:${sc.color}">
+            <span>${sc.label}</span>
+          </div>
+          <div class="script-box-body">${lines}</div>
+        </div>`;
+    });
+  }
+
+  // HEARING TABLE
+  if (s.hearing) {
+    bodyHTML += `<div class="sub-label">① 基本情報 ＋ 決算月を確認する</div>`;
+    const rows = hearingRows.map(r => `
+      <tr>
+        <td>${r.num}</td>
+        <td>${r.label}</td>
+        <td>${r.note}</td>
+      </tr>`).join('');
+    bodyHTML += `<table class="hearing-table"><tbody>${rows}</tbody></table>`;
+
+    bodyHTML += `<div class="sub-label">② 退職金制度の確認</div>`;
+    bodyHTML += `
+      <div class="script-box" style="border-color:#D9770620">
+        <div class="script-box-header" style="background:#FFFBEB;color:#D97706">
+          <span>💬 確認トーク</span>
+        </div>
+        <div class="script-box-body">
+          <div class="script-line" style="color:#374151">現在、退職金制度はお持ちでしょうか？</div>
+          <div class="script-line" style="color:#374151">（加入済みの場合）どのような制度に加入していますか？</div>
+          <div class="script-line" style="color:#6B7280">例：小規模企業共済 / 企業型DC / 中退共 / iDeCo+</div>
+        </div>
+      </div>`;
+
+    bodyHTML += `<div class="sub-label">③ 導入要件チェック（必須）</div>`;
+    bodyHTML += `<ul class="check-list">` + s.checkItems.map(c =>
+      `<li class="check-item"><div class="check-icon">✓</div><span>${c}</span></li>`
+    ).join('') + `</ul>`;
+
+    // SCHEDULING LINKS
+    bodyHTML += `<div class="sub-label">④ 日程調整リンクを送る</div>`;
+    bodyHTML += `
+      <div class="schedule-block">
+        <div class="schedule-grid">
+          <div class="schedule-card" style="border-color:#7C3AED;background:#F5F3FF;">
+            <div class="schedule-card-header" style="background:#7C3AED;color:white;">
+              👥 大企業向け
+            </div>
+            <div class="schedule-card-body" style="color:#4C1D95;">
+              厚生年金被保険者数<br>101名以上
+            </div>
+            <div class="schedule-card-note" style="color:#6D28D9;">jicoo / in-house-bpo-as</div>
+            <a class="schedule-btn" href="https://www.jicoo.com/t/betterplace/e/in-house-bpo-as" target="_blank"
+              style="background:#7C3AED;color:white;">
+              🗓️ 日程調整リンクを開く
+            </a>
+          </div>
+          <div class="schedule-card" style="border-color:#0891B2;background:#ECFEFF;">
+            <div class="schedule-card-header" style="background:#0891B2;color:white;">
+              🏢 中小企業向け
+            </div>
+            <div class="schedule-card-body" style="color:#164E63;">
+              厚生年金被保険者数<br>100名以下
+            </div>
+            <div class="schedule-card-note" style="color:#0E7490;">jicoo / in-house-bpo</div>
+            <a class="schedule-btn" href="https://www.jicoo.com/t/betterplace/e/in-house-bpo" target="_blank"
+              style="background:#0891B2;color:white;">
+              🗓️ 日程調整リンクを開く
+            </a>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // BRANCH
+  if (s.branch) {
+    const opts = s.branch.options.map(o => `
+      <div class="branch-cell" style="background:${o.bg}">
+        <div class="branch-cell-label" style="color:${o.color}">
+          ${o.label}<span style="font-weight:400;color:#6B7280">${o.sublabel}</span>
+        </div>
+        <div style="font-size:13px;line-height:1.7;color:#374151">${o.text}</div>
+      </div>`).join('');
+    bodyHTML += `
+      <div class="branch-header">${s.branch.condition}</div>
+      <div class="branch-grid">${opts}</div>`;
+  }
+
+  // Q&A
+  if (s.qa && s.qa.length) {
+    const qaItems = s.qa.map((item, i) => `
+      <div class="qa-item" id="qa-${step}-${i}">
+        <div class="qa-question" onclick="toggleQA('qa-${step}-${i}')">
+          <div class="qa-question-left">
+            <span class="qa-q-badge">Q</span>
+            <span>${item.q}</span>
+          </div>
+          <span class="qa-chevron">▼</span>
+        </div>
+        <div class="qa-answer">
+          <span class="qa-a-badge">A</span>${item.a}
+        </div>
+      </div>`).join('');
+    bodyHTML += `
+      <div class="qa-section">
+        <div class="qa-section-label">🙅 よくある断り文句への切り返し</div>
+        ${qaItems}
+      </div>`;
+  }
+
+  const isLast = step === steps.length - 1;
+
+  document.getElementById('mainCard').innerHTML = `
+    <div class="card-header">
+      <div>
+        <span class="step-badge" style="${badgeStyle}">STEP ${s.id}</span>
+      </div>
+      <div>
+        <div class="card-title">${s.title}</div>
+        <div class="card-subtitle">${s.subtitle}</div>
+      </div>
+    </div>
+    <div class="card-body">${bodyHTML}</div>
+    <div class="card-footer">
+      <button class="btn btn-prev" onclick="prev()" ${step === 0 ? 'disabled' : ''}>
+        ← 前のステップ
+      </button>
+      <span class="step-counter">${step + 1} / ${steps.length}</span>
+      <button class="btn ${isLast ? 'btn-finish' : 'btn-next'}" onclick="next()">
+        ${isLast ? '✅ 完了！' : '次のステップ →'}
+      </button>
+    </div>
+  `;
+}
+
+function renderComplete() {
+  document.getElementById('mainCard').innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-title">スクリプト完了！</div>
+      <div class="complete-body">
+        全7ステップのトークスクリプトをひととおり確認しました。<br>
+        実際の電話前に何度か声に出して練習してみましょう。<br><br>
+        <strong>ポイントのおさらい</strong><br>
+        明るく名乗る → メリットを2点だけ伝える → 情報共有スタンスでアポを取る<br>
+        → 改定月を確認 → ヒアリング → 興味を引き出す → URLと前日確認
+      </div>
+      <button class="btn-restart" onclick="restart()">🔄 最初から見る</button>
+    </div>
+  `;
+  buildNav();
+  buildProgress();
+}
+
+function goTo(i) {
+  currentStep = i;
+  renderAll();
+}
+
+function next() {
+  currentStep++;
+  renderAll();
+}
+
+function prev() {
+  if (currentStep > 0) currentStep--;
+  renderAll();
+}
+
+function restart() {
+  currentStep = 0;
+  renderAll();
+}
+
+function toggleQA(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function renderAll() {
+  buildNav();
+  buildProgress();
+  renderStep(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderAll();
+</script>
+</body>
+</html>
